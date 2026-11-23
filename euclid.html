@@ -34,8 +34,11 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);f
 a{color:var(--accent)}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 nav.top{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--rule)}
-nav.top .in{max-width:760px;margin:0 auto;padding:10px 16px;display:flex;gap:16px;overflow-x:auto;white-space:nowrap;font-size:15px}
-nav.top a{text-decoration:none;color:var(--muted)}
+nav.top .in{max-width:760px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:18px;font-size:16px}
+nav.top .go{margin-left:auto}
+nav.top select{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:6px 8px;max-width:52vw}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+nav.top a{text-decoration:none;color:var(--ink);font-family:var(--display);font-weight:600;padding:6px 0}
 nav.top a:hover{color:var(--ink)}
 main{max-width:760px;margin:0 auto;padding:0 16px 80px}
 header{padding:48px 0 24px}
@@ -59,9 +62,10 @@ ol.plain li:target{background:color-mix(in srgb,var(--yellow) 22%,transparent);b
 .tag.prob{border-color:color-mix(in srgb,var(--blue) 50%,var(--rule))}
 .statement{font-style:italic;margin:10px 0 0;max-width:65ch}
 figure{margin:16px 0 0}
-svg.fig{width:100%;height:auto;display:block;background:var(--paper);border-radius:6px;touch-action:none;user-select:none}
+svg.fig{width:100%;height:auto;display:block;background:var(--paper);border-radius:6px;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 figcaption{font-size:14px;color:var(--muted);margin-top:6px}
-.readout{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:4px}
+.readout{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 14px}
+.readout span{white-space:nowrap;max-width:100%;overflow-wrap:anywhere}
 .slider{display:flex;align-items:center;gap:10px;font-size:15px;margin-top:10px;flex-wrap:wrap}
 .slider input{flex:1;min-width:160px;accent-color:var(--accent)}
 details{margin-top:14px}
@@ -76,6 +80,16 @@ summary{cursor:pointer;color:var(--accent);font-size:16px}
 .bookhead .bk{font-family:var(--display);font-size:clamp(26px,5vw,34px);font-weight:600;letter-spacing:.05em}
 .bookhead .sub{color:var(--muted)}
 .alg{display:block;margin-top:6px;font-style:italic;color:var(--ink)}
+@media (max-width:520px){
+  body{font-size:17px}
+  header{padding:32px 0 16px}
+  h2{margin:40px 0 12px}
+  .prop{padding:16px 14px;border-radius:6px}
+  ol.plain li{grid-template-columns:2.2em 1fr}
+  .jump a{min-width:48px;padding:8px 10px}
+  figcaption,.readout{font-size:14px}
+  .slider input{min-width:100%}
+}
 footer{color:var(--muted);font-size:14px;margin-top:56px;border-top:1px solid var(--rule);padding-top:16px}
 /* figure marks */
 .fig .c{fill:none;stroke:var(--faint);stroke-width:1.2;stroke-dasharray:4 4}
@@ -87,8 +101,8 @@ footer{color:var(--muted);font-size:14px;margin-top:56px;border-top:1px solid va
 .fig .ghost{stroke:var(--accent);stroke-width:2;stroke-dasharray:6 4;fill:color-mix(in srgb,var(--accent) 10%,transparent)}
 .fig .tri{fill:color-mix(in srgb,var(--yellow) 14%,transparent);stroke:none}
 .fig .pt{fill:var(--ink)}
-.fig .lab{font-family:var(--body);font-size:15px;font-style:italic;fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:4px}
-.fig .warn{font-family:var(--body);font-size:14px;fill:var(--red)}
+.fig .lab{font-family:var(--body);font-size:17px;font-style:italic;fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:4px}
+.fig .warn{font-family:var(--body);font-size:16px;fill:var(--red)}
 .fig .wr{fill:color-mix(in srgb,var(--red) 35%,transparent)}
 .fig .wb{fill:color-mix(in srgb,var(--blue) 35%,transparent)}
 .fig .wy{fill:color-mix(in srgb,var(--yellow) 40%,transparent)}
@@ -102,7 +116,8 @@ footer{color:var(--muted);font-size:14px;margin-top:56px;border-top:1px solid va
 </head>
 <body>
 <nav class="top"><div class="in">
-  <a href="#book-1">Book I</a><a href="#definitions">Definitions</a><a href="#postulates">Postulates</a><a href="#common-notions">Common Notions</a><a href="#propositions">Propositions</a><a href="#book-2">Book II</a>
+  <a href="#book-1">Book I</a><a href="#book-2">Book II</a>
+  <label class="go"><span class="vh">Go to</span><select id="goto" aria-label="Go to a section"></select></label>
 </div></nav>
 <main>
 <header>
@@ -313,6 +328,7 @@ const PROPS=[
  note:"The converse of [[prop-47|I.47]], and the last proposition of Book I. Build a right angle with the same two shorter sides [[prop-11|I.11]]. By [[prop-47|I.47]] its third side matches, so the triangles are equal by [[prop-8|I.8]] and the original angle is right."}
 ];
 
+const setRO=(el,t)=>{el.innerHTML=t.split(/\s{3,}/).map(x=>`<span>${x}</span>`).join('');};
 const cite=s=>s.replace(/\[\[([\w-]+)\|([^\]]+)\]\]/g,'<a class="cite" href="#$1">[$2]</a>');
 function list(el,arr,prefix){document.getElementById(el).innerHTML=arr.map((x,i)=>`<li id="${prefix}-${i+1}"><span class="n">${i+1}.</span><span>${x}</span></li>`).join('');}
 list('defs',DEFS,'def');list('posts',POSTS,'post');list('cns',CNS,'cn');
@@ -347,9 +363,10 @@ function fig(id,pts,draw){
   let drag=null; const vb=svg.viewBox.baseVal, VW=vb.width||W, VH=vb.height||H;
   const render=()=>{
     let s=draw(pts);
-    for(const k in pts){const p=pts[k]; s+=`<circle class="ring" cx="${p.x}" cy="${p.y}" r="6"/><circle class="hit" data-k="${k}" cx="${p.x}" cy="${p.y}" r="18"/>`;}
+    for(const k in pts){const p=pts[k]; s+=`<circle class="ring" cx="${p.x}" cy="${p.y}" r="7"/><circle class="hit" data-k="${k}" cx="${p.x}" cy="${p.y}" r="24"/>`;}
     svg.innerHTML=s;
   };
+  svg.addEventListener('touchstart',e=>{if(e.target.dataset&&e.target.dataset.k)e.preventDefault();},{passive:false});
   svg.addEventListener('pointerdown',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;drag=k;try{svg.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault();});
   svg.addEventListener('pointermove',e=>{if(!drag)return;const m=svg.getScreenCTM();if(!m)return;const q=new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse());
     pts[drag].x=Math.max(8,Math.min(VW-8,q.x));pts[drag].y=Math.max(8,Math.min(VH-8,q.y));render();});
@@ -388,7 +405,7 @@ const r4=fig('fig4',{A:{x:50,y:220},B:{x:150,y:230},C:{x:85,y:130},D:{x:250,y:23
   const mv=p=>add(add(A,mul(sub(D,A),t)),rot(sub(p,A),th*t));
   const ang=(o,p,q)=>{const a=Math.abs(Math.atan2(p.y-o.y,p.x-o.x)-Math.atan2(q.y-o.y,q.x-o.x))*180/Math.PI;return a>180?360-a:a;};
   const ro=document.getElementById('ro4');
-  if(ro) ro.textContent=`AB = DE = ${f1(dist(A,B))}   AC = DF = ${f1(dist(A,Cc))}   ∠BAC = ∠EDF = ${f1(ang(A,B,Cc))}°   →   BC = ${f1(dist(B,Cc))}, EF = ${f1(dist(E,F))}`;
+  if(ro) setRO(ro,`AB = DE = ${f1(dist(A,B))}   AC = DF = ${f1(dist(A,Cc))}   ∠BAC = ∠EDF = ${f1(ang(A,B,Cc))}°   →   BC = ${f1(dist(B,Cc))}, EF = ${f1(dist(E,F))}`);
   let s=poly([A,B,Cc])+poly([D,E,F])+L(A,B,'r')+L(A,Cc,'b')+L(B,Cc,'y')+L(D,E,'r')+L(D,F,'b')+L(E,F,'y')+P(F)
    +lab(A,'A',Cc)+lab(B,'B',Cc)+lab(Cc,'C',A)+lab(D,'D',F)+lab(E,'E',F)+lab(F,'F',D);
   if(t>0){const a=mv(A),b=mv(B),c=mv(Cc);s+=poly([a,b,c],'ghost');}
@@ -437,7 +454,7 @@ fig('fig32',{A:{x:150,y:70},B:{x:50,y:240},C:{x:230,y:240}},({A,B,C:Cc})=>{
   const D=add(Cc,mul(unit(sub(Cc,B)),120)),E=add(Cc,mul(unit(sub(A,B)),130));
   const a=angD(A,B,Cc),b=angD(B,A,Cc),c=angD(Cc,A,B);
   const ro=document.getElementById('ro32');
-  if(ro) ro.textContent=`∠A = ${f1(a)}°   ∠B = ${f1(b)}°   ∠C = ${f1(c)}°   sum = ${f1(a+b+c)}°`;
+  if(ro) setRO(ro,`∠A = ${f1(a)}°   ∠B = ${f1(b)}°   ∠C = ${f1(c)}°   sum = ${f1(a+b+c)}°`);
   return wedge(A,B,Cc,26,'wr')+wedge(Cc,A,E,26,'wr')+wedge(B,A,Cc,26,'wb')+wedge(Cc,E,D,34,'wb')+wedge(Cc,A,B,20,'wy')
    +L(A,B)+L(A,Cc)+L(B,Cc)+L(Cc,D,'aux')+L(Cc,E,'aux')+P(D)+P(E)
    +lab(A,'A',Cc)+lab(B,'B',Cc)+T(Cc,'C',-4,22)+T(D,'D',-4,22)+lab(E,'E',Cc);
@@ -459,7 +476,7 @@ fig('fig47',{B:{x:130,y:200},C:{x:270,y:200},A:{x:180,y:132}},pts=>{
   const u=unit(sub(Cc,B)),M=add(B,mul(u,dot(sub(A,B),u))),Lp=add(M,n);
   const ab=dist(A,B)**2,ac=dist(A,Cc)**2,bc=dist(B,Cc)**2,k=v=>Math.round(v/100);
   const ro=document.getElementById('ro47');
-  if(ro) ro.textContent=`AB² = ${k(ab)}   AC² = ${k(ac)}   AB² + AC² = ${k(ab+ac)}   BC² = ${k(bc)}   (in units of 100)`;
+  if(ro) setRO(ro,`AB² = ${k(ab)}   AC² = ${k(ac)}   AB² + AC² = ${k(ab+ac)}   BC² = ${k(bc)}   (in units of 100)`);
   const cen=mul(add(add(A,B),Cc),1/3);
   return C(O,R)+poly([A,B,F,G],'sqr')+poly([B,M,Lp,D],'sqr')+poly([A,Cc,K,Hh],'sqb')+poly([M,Cc,E,Lp],'sqb')
    +poly([B,Cc,E,D],'sqn')+L(A,B)+L(A,Cc)+L(A,Lp,'aux')+L(A,D,'aux')+L(F,Cc,'aux')
@@ -524,12 +541,22 @@ fig('fig-b2-4',{C:{x:176,y:34}},pts=>{
   const rect=(x,y,w,h,c)=>`<rect class="${c}" x="${x}" y="${y}" width="${w}" height="${h}"/>`;
   const mid=(x,y,t)=>`<text class="lab" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle">${t}</text>`;
   const u=v=>v/24, ro=document.getElementById('ro-b2-4');
-  if(ro) ro.textContent=`AC = ${f1(u(a))}   CB = ${f1(u(b))}   AC² + CB² + 2·AC·CB = ${f1(u(a)**2)} + ${f1(u(b)**2)} + ${f1(2*u(a)*u(b))} = ${f1(u(S)**2)} = AB²`;
+  if(ro) setRO(ro,`AC = ${f1(u(a))}   CB = ${f1(u(b))}   AC² = ${f1(u(a)**2)}   CB² = ${f1(u(b)**2)}   2·AC·CB = ${f1(2*u(a)*u(b))}   sum = ${f1(u(S)**2)} = AB²`);
   return rect(x0,y0,a,a,'sqr')+rect(cx,ya,b,b,'sqb')+rect(cx,y0,b,a,'sqy')+rect(x0,ya,a,b,'sqy')
    +poly([A,B,E,D],'sqn')+L(D,B,'aux')
    +(a>40?mid(x0+a/2,y0+a/2,'a²'):'')+(b>40?mid(cx+b/2,ya+b/2,'b²'):'')+(a>24&&b>40?mid(cx+b/2,y0+a/2,'ab')+mid(x0+a/2,ya+b/2,'ab'):'')
    +T(A,'A',-18,-2)+T(B,'B',6,-2)+T(Cc,'C',-5,-10)+T(D,'D',-18,14)+T(E,'E',6,14);
 });
+
+(function(){
+  const g=document.getElementById('goto'); if(!g) return;
+  const opt=(v,t)=>`<option value="${v}">${t}</option>`;
+  let h=opt('','Jump to…')+'<optgroup label="Book I">'+opt('definitions','Definitions')+opt('postulates','Postulates')+opt('common-notions','Common Notions')
+   +PROPS.map((p,i)=>opt('prop-'+(i+1),'Proposition I.'+(i+1)+(p.fig?' ◆':''))).join('')+'</optgroup>'
+   +'<optgroup label="Book II">'+opt('b2-definitions','Definitions')+B2.map((p,i)=>opt('b2-prop-'+(i+1),'Proposition II.'+(i+1)+(p.fig?' ◆':''))).join('')+'</optgroup>';
+  g.innerHTML=h;
+  g.addEventListener('change',()=>{const v=g.value;if(!v)return;const el=document.getElementById(v);if(el){el.scrollIntoView();history.replaceState(null,'','#'+v);}g.value='';});
+})();
 if(location.hash){const el=document.getElementById(location.hash.slice(1));if(el)el.scrollIntoView();}
 </script>
 </body>
