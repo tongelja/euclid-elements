@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Euclid's Elements, Book I</title>
+<title>Euclid's Elements</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
@@ -71,6 +71,11 @@ summary{cursor:pointer;color:var(--accent);font-size:16px}
 .cite{font-size:.85em;white-space:nowrap}
 .qed{font-style:italic;color:var(--muted)}
 .note{color:var(--muted);font-size:16px;margin:10px 0 0;max-width:65ch}
+.bookhead{margin:72px 0 0;padding:20px 0 0;border-top:3px double var(--rule);display:flex;flex-direction:column;gap:2px}
+#book-1{margin-top:8px}
+.bookhead .bk{font-family:var(--display);font-size:clamp(26px,5vw,34px);font-weight:600;letter-spacing:.05em}
+.bookhead .sub{color:var(--muted)}
+.alg{display:block;margin-top:6px;font-style:italic;color:var(--ink)}
 footer{color:var(--muted);font-size:14px;margin-top:56px;border-top:1px solid var(--rule);padding-top:16px}
 /* figure marks */
 .fig .c{fill:none;stroke:var(--faint);stroke-width:1.2;stroke-dasharray:4 4}
@@ -90,26 +95,29 @@ footer{color:var(--muted);font-size:14px;margin-top:56px;border-top:1px solid va
 .fig .sqr{fill:color-mix(in srgb,var(--red) 20%,transparent);stroke:var(--red);stroke-width:1.5}
 .fig .sqb{fill:color-mix(in srgb,var(--blue) 20%,transparent);stroke:var(--blue);stroke-width:1.5}
 .fig .sqn{fill:none;stroke:var(--ink);stroke-width:1.6}
+.fig .sqy{fill:color-mix(in srgb,var(--yellow) 28%,transparent);stroke:var(--yellow);stroke-width:1.5}
 .fig .hit{fill:transparent;cursor:grab}
 .fig .ring{fill:var(--surface);stroke:var(--accent);stroke-width:2;pointer-events:none}
 </style>
 </head>
 <body>
 <nav class="top"><div class="in">
-  <a href="#definitions">Definitions</a><a href="#postulates">Postulates</a><a href="#common-notions">Common Notions</a><a href="#propositions">Propositions</a>
+  <a href="#book-1">Book I</a><a href="#definitions">Definitions</a><a href="#postulates">Postulates</a><a href="#common-notions">Common Notions</a><a href="#propositions">Propositions</a><a href="#book-2">Book II</a>
 </div></nav>
 <main>
 <header>
-  <h1>Euclid's Elements<br>Book I</h1>
-  <p>The first principles and all 48 propositions, in T. L. Heath's 1908 translation. Drag the ringed points in any figure; the construction redraws as you move them. Bracketed references link to the step they rely on.</p>
+  <h1>Euclid's Elements<br>Books I–II</h1>
+  <p>The first principles, all 48 propositions of Book I and all 14 of Book II, in T. L. Heath's 1908 translation. Drag the ringed points in any figure; the construction redraws as you move them. Bracketed references link to the step they rely on.</p>
 </header>
 
+<div class="bookhead" id="book-1"><span class="bk">Book I</span><span class="sub">Triangles, parallels and area</span></div>
 <section id="definitions"><h2>Definitions</h2><ol class="plain" id="defs"></ol></section>
 <section id="postulates"><h2>Postulates</h2><p class="note" style="margin:0 0 12px">Let the following be postulated:</p><ol class="plain" id="posts"></ol></section>
 <section id="common-notions"><h2>Common Notions</h2><ol class="plain" id="cns"></ol></section>
 <section id="propositions"><h2>Propositions</h2><div class="jump" id="jump"></div><div id="props"></div></section>
+<div id="book2"></div>
 
-<footer>Text: Euclid, <i>Elements</i>, Book I, translated by Sir Thomas L. Heath (Cambridge, 1908), public domain. Propositions shown without a full proof have a short summary, not Heath's wording. Diagrams colored after Oliver Byrne's 1847 edition.</footer>
+<footer>Text: Euclid, <i>Elements</i>, Books I–II, translated by Sir Thomas L. Heath (Cambridge, 1908), public domain. Propositions shown without a full proof have a short summary, not Heath's wording; the algebra under each Book II proposition is a modern restatement. Diagrams colored after Oliver Byrne's 1847 edition.</footer>
 </main>
 
 <script>
@@ -457,6 +465,72 @@ fig('fig47',{B:{x:130,y:200},C:{x:270,y:200},A:{x:180,y:132}},pts=>{
    +poly([B,Cc,E,D],'sqn')+L(A,B)+L(A,Cc)+L(A,Lp,'aux')+L(A,D,'aux')+L(F,Cc,'aux')
    +lab(A,'A',cen)+lab(B,'B',A)+lab(Cc,'C',A)+lab(D,'D',O)+lab(E,'E',O)+lab(F,'F',A)+lab(G,'G',B)+lab(Hh,'H',Cc)+lab(K,'K',A)+lab(Lp,'L',A);
 });
+
+/* ===== Book II ===== */
+const B2DEFS=[
+"Any rectangular parallelogram is said to be <b>contained</b> by the two straight lines containing the right angle.",
+"And in any parallelogrammic area let any one whatever of the parallelograms about its diameter with the two complements be called a <b>gnomon</b>."
+];
+const B2=[
+{t:"thm",s:"If there be two straight lines, and one of them be cut into any number of segments whatever, the rectangle contained by the two straight lines is equal to the rectangles contained by the uncut straight line and each of the segments.",
+ note:"The distributive law.<span class=\"alg\">a(b + c + d) = ab + ac + ad</span>"},
+{t:"thm",s:"If a straight line be cut at random, the rectangle contained by the whole and both of the segments is equal to the square on the whole.",
+ note:"<span class=\"alg\">(a + b)a + (a + b)b = (a + b)²</span>"},
+{t:"thm",s:"If a straight line be cut at random, the rectangle contained by the whole and one of the segments is equal to the rectangle contained by the segments and the square on the aforesaid segment.",
+ note:"<span class=\"alg\">(a + b)a = ab + a²</span>"},
+{t:"thm",s:"If a straight line be cut at random, the square on the whole is equal to the squares on the segments and twice the rectangle contained by the segments.",fig:4,
+ cap:"Drag C along AB. The square on AB always splits into the square on AC (red), the square on CB (blue) and two equal rectangles AC by CB (yellow).",
+ note:"The square of a sum, proved by cutting up the square on AB with lines drawn parallel to its sides [[prop-31|I.31]], [[prop-34|I.34]], [[prop-43|I.43]].<span class=\"alg\">(a + b)² = a² + b² + 2ab</span>"},
+{t:"thm",s:"If a straight line be cut into equal and unequal segments, the rectangle contained by the unequal segments of the whole together with the square on the straight line between the points of section is equal to the square on the half.",
+ note:"Behind this is the difference of two squares. Euclid uses it again for [[b2-prop-14|II.14]].<span class=\"alg\">ab + ((a − b)/2)² = ((a + b)/2)²</span>"},
+{t:"thm",s:"If a straight line be bisected and a straight line be added to it in a straight line, the rectangle contained by the whole with the added straight line and the added straight line together with the square on the half is equal to the square on the straight line made up of the half and the added straight line.",
+ note:"With half the line a and the added piece b:<span class=\"alg\">(2a + b)b + a² = (a + b)²</span>"},
+{t:"thm",s:"If a straight line be cut at random, the square on the whole and that on one of the segments both together are equal to twice the rectangle contained by the whole and the said segment and the square on the remaining segment.",
+ note:"<span class=\"alg\">(a + b)² + a² = 2(a + b)a + b²</span>"},
+{t:"thm",s:"If a straight line be cut at random, four times the rectangle contained by the whole and one of the segments together with the square on the remaining segment is equal to the square described on the whole and the aforesaid segment as on one straight line.",
+ note:"<span class=\"alg\">4(a + b)a + b² = (2a + b)²</span>"},
+{t:"thm",s:"If a straight line be cut into equal and unequal segments, the squares on the unequal segments of the whole are double of the square on the half and of the square on the straight line between the points of section.",
+ note:"<span class=\"alg\">a² + b² = 2[((a + b)/2)² + ((a − b)/2)²]</span>"},
+{t:"thm",s:"If a straight line be bisected, and a straight line be added to it in a straight line, the square on the whole with the added straight line and the square on the added straight line both together are double of the square on the half and of the square described on the straight line made up of the half and the added straight line as on one straight line.",
+ note:"With half the line a and the added piece b:<span class=\"alg\">(2a + b)² + b² = 2[a² + (a + b)²]</span>"},
+{t:"prob",s:"To cut a given straight line so that the rectangle contained by the whole and one of the segments is equal to the square on the remaining segment.",
+ note:"This is the division later called the golden section. Euclid builds it with [[prop-46|I.46]], [[prop-10|I.10]] and [[b2-prop-6|II.6]]. For a line of length a cut at x:<span class=\"alg\">a(a − x) = x², so x = a(√5 − 1)/2 ≈ 0.618a</span>"},
+{t:"thm",s:"In obtuse-angled triangles the square on the side subtending the obtuse angle is greater than the squares on the sides containing the obtuse angle by twice the rectangle contained by one of the sides about the obtuse angle, namely that on which the perpendicular falls, and the straight line cut off outside by the perpendicular towards the obtuse angle.",
+ note:"The law of cosines for an obtuse angle, proved from [[b2-prop-4|II.4]] and [[prop-47|I.47]]. With d the length cut off outside by the perpendicular:<span class=\"alg\">c² = a² + b² + 2ad</span>"},
+{t:"thm",s:"In acute-angled triangles the square on the side subtending the acute angle is less than the squares on the sides containing the acute angle by twice the rectangle contained by one of the sides about the acute angle, namely that on which the perpendicular falls, and the straight line cut off within by the perpendicular towards the acute angle.",
+ note:"The law of cosines for an acute angle, proved from [[b2-prop-7|II.7]] and [[prop-47|I.47]]. With d the length cut off inside by the perpendicular:<span class=\"alg\">c² = a² + b² − 2ad</span>"},
+{t:"prob",s:"To construct a square equal to a given rectilineal figure.",
+ note:"Turn the figure into a rectangle [[prop-45|I.45]], then find the square equal to that rectangle using a semicircle, [[b2-prop-5|II.5]] and [[prop-47|I.47]]. In modern terms, it constructs the square root of an area: a square with side √(ab) for a rectangle a by b."}
+];
+(function(){
+  const pre='b2',R='II';
+  const card=(p,i)=>`<article class="prop" id="${pre}-prop-${i+1}">
+ <div class="head"><span class="num">${R}.${i+1}</span><span class="tag ${p.t}">${p.t==='prob'?'Problem':'Theorem'}</span></div>
+ <p class="statement">${p.s}</p>
+ ${p.fig?`<figure><svg class="fig" id="fig-${pre}-${i+1}" viewBox="0 0 400 300" role="img" aria-label="Interactive figure for Proposition ${R}.${i+1}"></svg><figcaption>${p.cap}</figcaption><div class="readout" id="ro-${pre}-${i+1}"></div></figure>`:''}
+ ${p.note?`<p class="note">${cite(p.note)}</p>`:''}
+</article>`;
+  document.getElementById('book2').innerHTML=`<div class="bookhead" id="book-2"><span class="bk">Book II</span><span class="sub">Geometric algebra: rectangles and squares</span></div>
+<section><h2 id="b2-definitions">Definitions</h2><ol class="plain">${B2DEFS.map((x,i)=>`<li id="${pre}-def-${i+1}"><span class="n">${i+1}.</span><span>${x}</span></li>`).join('')}</ol></section>
+<section><h2 id="b2-propositions">Propositions</h2><p class="note" style="margin:0 0 16px">Book II states algebra as geometry: a “rectangle contained by” two lines is their product, and the “square on” a line is its square. The line under each proposition gives the same fact in modern notation.</p>
+<div class="jump">${B2.map((p,i)=>`<a href="#${pre}-prop-${i+1}" class="${p.fig?'live':''}">${R}.${i+1}</a>`).join('')}</div>
+${B2.map(card).join('')}</section>`;
+})();
+/* II.4 */
+fig('fig-b2-4',{C:{x:176,y:34}},pts=>{
+  const x0=80,y0=34,S=240,cx=Math.max(x0+24,Math.min(x0+S-24,pts.C.x)); pts.C.x=cx; pts.C.y=y0;
+  const a=cx-x0,b=S-a,ya=y0+a;
+  const A={x:x0,y:y0},B={x:x0+S,y:y0},Cc={x:cx,y:y0},D={x:x0,y:y0+S},E={x:x0+S,y:y0+S};
+  const rect=(x,y,w,h,c)=>`<rect class="${c}" x="${x}" y="${y}" width="${w}" height="${h}"/>`;
+  const mid=(x,y,t)=>`<text class="lab" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle">${t}</text>`;
+  const u=v=>v/24, ro=document.getElementById('ro-b2-4');
+  if(ro) ro.textContent=`AC = ${f1(u(a))}   CB = ${f1(u(b))}   AC² + CB² + 2·AC·CB = ${f1(u(a)**2)} + ${f1(u(b)**2)} + ${f1(2*u(a)*u(b))} = ${f1(u(S)**2)} = AB²`;
+  return rect(x0,y0,a,a,'sqr')+rect(cx,ya,b,b,'sqb')+rect(cx,y0,b,a,'sqy')+rect(x0,ya,a,b,'sqy')
+   +poly([A,B,E,D],'sqn')+L(D,B,'aux')
+   +(a>40?mid(x0+a/2,y0+a/2,'a²'):'')+(b>40?mid(cx+b/2,ya+b/2,'b²'):'')+(a>24&&b>40?mid(cx+b/2,y0+a/2,'ab')+mid(x0+a/2,ya+b/2,'ab'):'')
+   +T(A,'A',-18,-2)+T(B,'B',6,-2)+T(Cc,'C',-5,-10)+T(D,'D',-18,14)+T(E,'E',6,14);
+});
+if(location.hash){const el=document.getElementById(location.hash.slice(1));if(el)el.scrollIntoView();}
 </script>
 </body>
 </html>
