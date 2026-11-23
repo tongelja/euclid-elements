@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Euclid's Elements, Book I</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+/* Layout: a single reading column; first principles on top, then propositions as numbered entries with live diagrams. Byrne's red, yellow and blue mark the figures. */
+:root{
+  --paper:#f4f5f7; --surface:#ffffff; --ink:#1b2233; --muted:#5d6577; --rule:#d9dce3;
+  --accent:#1f4fa8; --red:#c8322b; --yellow:#d9a400; --blue:#1f4fa8; --faint:#9aa2b2;
+  --display:"Cinzel", "Trajan Pro", Georgia, serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#11141b; --surface:#191d27; --ink:#e6e8ee; --muted:#9ba3b4; --rule:#2c3242;
+    --accent:#7fa6f0; --red:#ef6a5f; --yellow:#f2c443; --blue:#6f9bf0; --faint:#5f677a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11141b; --surface:#191d27; --ink:#e6e8ee; --muted:#9ba3b4; --rule:#2c3242;
+  --accent:#7fa6f0; --red:#ef6a5f; --yellow:#f2c443; --blue:#6f9bf0; --faint:#5f677a;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.6}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+nav.top{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--rule)}
+nav.top .in{max-width:760px;margin:0 auto;padding:10px 16px;display:flex;gap:16px;overflow-x:auto;white-space:nowrap;font-size:15px}
+nav.top a{text-decoration:none;color:var(--muted)}
+nav.top a:hover{color:var(--ink)}
+main{max-width:760px;margin:0 auto;padding:0 16px 80px}
+header{padding:48px 0 24px}
+h1,h2{font-family:var(--display);font-weight:600;letter-spacing:.04em;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,6vw,44px);line-height:1.15}
+header p{color:var(--muted);max-width:60ch;margin:12px 0 0}
+h2{font-size:22px;margin:56px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+ol.plain{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+ol.plain li{display:grid;grid-template-columns:3.2em 1fr;gap:8px;max-width:68ch}
+ol.plain .n{color:var(--muted);font-variant-numeric:tabular-nums;font-size:15px;padding-top:2px}
+ol.plain li:target{background:color-mix(in srgb,var(--yellow) 22%,transparent);border-radius:4px}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px}
+.jump a{min-width:44px;text-align:center;padding:6px 10px;border:1px solid var(--rule);border-radius:6px;text-decoration:none;color:var(--ink);font-variant-numeric:tabular-nums;font-size:15px;background:var(--surface)}
+.jump a.live{border-color:var(--accent);color:var(--accent)}
+.prop{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:20px;margin:0 0 20px}
+.prop:target{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
+.prop .head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.prop .num{font-family:var(--display);font-size:20px;font-weight:600}
+.tag{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--rule);border-radius:99px;padding:1px 9px}
+.tag.thm{border-color:color-mix(in srgb,var(--red) 50%,var(--rule))}
+.tag.prob{border-color:color-mix(in srgb,var(--blue) 50%,var(--rule))}
+.statement{font-style:italic;margin:10px 0 0;max-width:65ch}
+figure{margin:16px 0 0}
+svg.fig{width:100%;height:auto;display:block;background:var(--paper);border-radius:6px;touch-action:none;user-select:none}
+figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+.readout{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:4px}
+.slider{display:flex;align-items:center;gap:10px;font-size:15px;margin-top:10px;flex-wrap:wrap}
+.slider input{flex:1;min-width:160px;accent-color:var(--accent)}
+details{margin-top:14px}
+summary{cursor:pointer;color:var(--accent);font-size:16px}
+.proof{max-width:65ch}
+.proof p{margin:10px 0}
+.cite{font-size:.85em;white-space:nowrap}
+.qed{font-style:italic;color:var(--muted)}
+.note{color:var(--muted);font-size:16px;margin:10px 0 0;max-width:65ch}
+footer{color:var(--muted);font-size:14px;margin-top:56px;border-top:1px solid var(--rule);padding-top:16px}
+/* figure marks */
+.fig .c{fill:none;stroke:var(--faint);stroke-width:1.2;stroke-dasharray:4 4}
+.fig .ln{stroke:var(--ink);stroke-width:1.6;fill:none}
+.fig .aux{stroke:var(--faint);stroke-width:1.2;fill:none}
+.fig .r{stroke:var(--red);stroke-width:3.5;stroke-linecap:round}
+.fig .y{stroke:var(--yellow);stroke-width:3.5;stroke-linecap:round}
+.fig .b{stroke:var(--blue);stroke-width:3.5;stroke-linecap:round}
+.fig .ghost{stroke:var(--accent);stroke-width:2;stroke-dasharray:6 4;fill:color-mix(in srgb,var(--accent) 10%,transparent)}
+.fig .tri{fill:color-mix(in srgb,var(--yellow) 14%,transparent);stroke:none}
+.fig .pt{fill:var(--ink)}
+.fig .lab{font-family:var(--body);font-size:15px;font-style:italic;fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:4px}
+.fig .warn{font-family:var(--body);font-size:14px;fill:var(--red)}
+.fig .wr{fill:color-mix(in srgb,var(--red) 35%,transparent)}
+.fig .wb{fill:color-mix(in srgb,var(--blue) 35%,transparent)}
+.fig .wy{fill:color-mix(in srgb,var(--yellow) 40%,transparent)}
+.fig .sqr{fill:color-mix(in srgb,var(--red) 20%,transparent);stroke:var(--red);stroke-width:1.5}
+.fig .sqb{fill:color-mix(in srgb,var(--blue) 20%,transparent);stroke:var(--blue);stroke-width:1.5}
+.fig .sqn{fill:none;stroke:var(--ink);stroke-width:1.6}
+.fig .hit{fill:transparent;cursor:grab}
+.fig .ring{fill:var(--surface);stroke:var(--accent);stroke-width:2;pointer-events:none}
+</style>
+</head>
+<body>
+<nav class="top"><div class="in">
+  <a href="#definitions">Definitions</a><a href="#postulates">Postulates</a><a href="#common-notions">Common Notions</a><a href="#propositions">Propositions</a>
+</div></nav>
+<main>
+<header>
+  <h1>Euclid's Elements<br>Book I</h1>
+  <p>The first principles and all 48 propositions, in T. L. Heath's 1908 translation. Drag the ringed points in any figure; the construction redraws as you move them. Bracketed references link to the step they rely on.</p>
+</header>
+
+<section id="definitions"><h2>Definitions</h2><ol class="plain" id="defs"></ol></section>
+<section id="postulates"><h2>Postulates</h2><p class="note" style="margin:0 0 12px">Let the following be postulated:</p><ol class="plain" id="posts"></ol></section>
+<section id="common-notions"><h2>Common Notions</h2><ol class="plain" id="cns"></ol></section>
+<section id="propositions"><h2>Propositions</h2><div class="jump" id="jump"></div><div id="props"></div></section>
+
+<footer>Text: Euclid, <i>Elements</i>, Book I, translated by Sir Thomas L. Heath (Cambridge, 1908), public domain. Propositions shown without a full proof have a short summary, not Heath's wording. Diagrams colored after Oliver Byrne's 1847 edition.</footer>
+</main>
+
+<script>
+const DEFS=[
+"A <b>point</b> is that which has no part.",
+"A <b>line</b> is breadthless length.",
+"The extremities of a line are points.",
+"A <b>straight line</b> is a line which lies evenly with the points on itself.",
+"A <b>surface</b> is that which has length and breadth only.",
+"The extremities of a surface are lines.",
+"A <b>plane surface</b> is a surface which lies evenly with the straight lines on itself.",
+"A <b>plane angle</b> is the inclination to one another of two lines in a plane which meet one another and do not lie in a straight line.",
+"And when the lines containing the angle are straight, the angle is called <b>rectilineal</b>.",
+"When a straight line set up on a straight line makes the adjacent angles equal to one another, each of the equal angles is <b>right</b>, and the straight line standing on the other is called a <b>perpendicular</b> to that on which it stands.",
+"An <b>obtuse angle</b> is an angle greater than a right angle.",
+"An <b>acute angle</b> is an angle less than a right angle.",
+"A <b>boundary</b> is that which is an extremity of anything.",
+"A <b>figure</b> is that which is contained by any boundary or boundaries.",
+"A <b>circle</b> is a plane figure contained by one line such that all the straight lines falling upon it from one point among those lying within the figure are equal to one another;",
+"And the point is called the <b>centre</b> of the circle.",
+"A <b>diameter</b> of the circle is any straight line drawn through the centre and terminated in both directions by the circumference of the circle, and such a straight line also bisects the circle.",
+"A <b>semicircle</b> is the figure contained by the diameter and the circumference cut off by it. And the centre of the semicircle is the same as that of the circle.",
+"<b>Rectilineal figures</b> are those which are contained by straight lines, trilateral figures being those contained by three, quadrilateral those contained by four, and multilateral those contained by more than four straight lines.",
+"Of trilateral figures, an <b>equilateral triangle</b> is that which has its three sides equal, an <b>isosceles triangle</b> that which has two of its sides alone equal, and a <b>scalene triangle</b> that which has its three sides unequal.",
+"Further, of trilateral figures, a <b>right-angled triangle</b> is that which has a right angle, an <b>obtuse-angled triangle</b> that which has an obtuse angle, and an <b>acute-angled triangle</b> that which has its three angles acute.",
+"Of quadrilateral figures, a <b>square</b> is that which is both equilateral and right-angled; an <b>oblong</b> that which is right-angled but not equilateral; a <b>rhombus</b> that which is equilateral but not right-angled; and a <b>rhomboid</b> that which has its opposite sides and angles equal to one another but is neither equilateral nor right-angled. And let quadrilaterals other than these be called <b>trapezia</b>.",
+"<b>Parallel</b> straight lines are straight lines which, being in the same plane and being produced indefinitely in both directions, do not meet one another in either direction."
+];
+const POSTS=[
+"To draw a straight line from any point to any point.",
+"To produce a finite straight line continuously in a straight line.",
+"To describe a circle with any centre and distance.",
+"That all right angles are equal to one another.",
+"That, if a straight line falling on two straight lines make the interior angles on the same side less than two right angles, the two straight lines, if produced indefinitely, meet on that side on which are the angles less than the two right angles."
+];
+const CNS=[
+"Things which are equal to the same thing are also equal to one another.",
+"If equals be added to equals, the wholes are equal.",
+"If equals be subtracted from equals, the remainders are equal.",
+"Things which coincide with one another are equal to one another.",
+"The whole is greater than the part."
+];
+const PROPS=[
+{t:"prob",s:"On a given finite straight line to construct an equilateral triangle.",fig:1,
+ cap:"Drag A or B. Both circles have radius AB, so C is always the same distance from A and from B.",
+ proof:`<p>Let AB be the given finite straight line. Thus it is required to construct an equilateral triangle on the straight line AB.</p>
+<p>With centre A and distance AB let the circle BCD be described [[post-3|Post. 3]]; again, with centre B and distance BA let the circle ACE be described [[post-3|Post. 3]]; and from the point C, in which the circles cut one another, to the points A, B let the straight lines CA, CB be joined [[post-1|Post. 1]].</p>
+<p>Now, since the point A is the centre of the circle CDB, AC is equal to AB [[def-15|Def. 15]]. Again, since the point B is the centre of the circle CAE, BC is equal to BA [[def-15|Def. 15]]. But CA was also proved equal to AB; therefore each of the straight lines CA, CB is equal to AB.</p>
+<p>And things which are equal to the same thing are also equal to one another [[cn-1|C.N. 1]]; therefore CA is also equal to CB. Therefore the three straight lines CA, AB, BC are equal to one another.</p>
+<p>Therefore the triangle ABC is equilateral; and it has been constructed on the given finite straight line AB. <span class="qed">Being what it was required to do.</span></p>`},
+{t:"prob",s:"To place at a given point (as an extremity) a straight line equal to a given straight line.",fig:2,
+ cap:"Drag A, B or C. The red line AL always matches the red line BC.",
+ proof:`<p>Let A be the given point, and BC the given straight line. Thus it is required to place at the point A (as an extremity) a straight line equal to the given straight line BC.</p>
+<p>From the point A to the point B let the straight line AB be joined [[post-1|Post. 1]]; and on it let the equilateral triangle DAB be constructed [[prop-1|I.1]]. Let the straight lines AE, BF be produced in a straight line with DA, DB [[post-2|Post. 2]]; with centre B and distance BC let the circle CGH be described [[post-3|Post. 3]]; and again, with centre D and distance DG let the circle GKL be described [[post-3|Post. 3]].</p>
+<p>Then, since the point B is the centre of the circle CGH, BC is equal to BG. Again, since the point D is the centre of the circle GKL, DL is equal to DG. And in these DA is equal to DB; therefore the remainder AL is equal to the remainder BG [[cn-3|C.N. 3]].</p>
+<p>But BC was also proved equal to BG; therefore each of the straight lines AL, BC is equal to BG. And things which are equal to the same thing are also equal to one another [[cn-1|C.N. 1]]; therefore AL is also equal to BC.</p>
+<p>Therefore at the given point A the straight line AL is placed equal to the given straight line BC. <span class="qed">Being what it was required to do.</span></p>`},
+{t:"prob",s:"Given two unequal straight lines, to cut off from the greater a straight line equal to the less.",fig:3,
+ cap:"Drag A, B, or the ends of line C. AD is placed equal to C by I.2; the circle then marks E on AB.",
+ proof:`<p>Let AB, C be the two given unequal straight lines, and let AB be the greater of them. Thus it is required to cut off from AB the greater a straight line equal to C the less.</p>
+<p>At the point A let AD be placed equal to the straight line C [[prop-2|I.2]]; and with centre A and distance AD let the circle DEF be described [[post-3|Post. 3]].</p>
+<p>Now, since the point A is the centre of the circle DEF, AE is equal to AD [[def-15|Def. 15]]. But C is also equal to AD. Therefore each of the straight lines AE, C is equal to AD; so that AE is also equal to C [[cn-1|C.N. 1]].</p>
+<p>Therefore, given the two straight lines AB, C, from AB the greater AE has been cut off equal to C the less. <span class="qed">Being what it was required to do.</span></p>`},
+{t:"thm",s:"If two triangles have the two sides equal to two sides respectively, and have the angles contained by the equal straight lines equal, they will also have the base equal to the base, the triangle will be equal to the triangle, and the remaining angles will be equal to the remaining angles respectively, namely those which the equal sides subtend.",fig:4,
+ cap:"Drag A, B, C to reshape triangle ABC. Drag D to move DEF, and E to turn it. Then use the slider to lay ABC on DEF.",
+ proof:`<p>Let ABC, DEF be two triangles having the two sides AB, AC equal to the two sides DE, DF respectively, namely AB to DE and AC to DF, and the angle BAC equal to the angle EDF. I say that the base BC is also equal to the base EF, the triangle ABC will be equal to the triangle DEF, and the remaining angles will be equal to the remaining angles respectively, namely the angle ABC to the angle DEF, and the angle ACB to the angle DFE.</p>
+<p>For, if the triangle ABC be applied to the triangle DEF, and if the point A be placed on the point D and the straight line AB on DE, then the point B will also coincide with E, because AB is equal to DE.</p>
+<p>Again, AB coinciding with DE, the straight line AC will also coincide with DF, because the angle BAC is equal to the angle EDF; hence the point C will also coincide with the point F, because AC is again equal to DF. But B also coincided with E; hence the base BC will coincide with the base EF, and will be equal to it [[cn-4|C.N. 4]].</p>
+<p>Thus the whole triangle ABC will coincide with the whole triangle DEF, and will be equal to it. And the remaining angles will also coincide with the remaining angles and will be equal to them, the angle ABC to the angle DEF, and the angle ACB to the angle DFE. <span class="qed">Being what it was required to prove.</span></p>`},
+{t:"thm",s:"In isosceles triangles the angles at the base are equal to one another, and, if the equal straight lines be produced further, the angles under the base will be equal to one another.",
+ note:"Known as the <i>pons asinorum</i>, the “bridge of asses.” Euclid extends the two equal sides, cuts off equal lengths on the extensions [[prop-3|I.3]], and applies [[prop-4|I.4]] twice to pairs of overlapping triangles."},
+{t:"thm",s:"If in a triangle two angles be equal to one another, the sides which subtend the equal angles will also be equal to one another.",
+ note:"The converse of [[prop-5|I.5]], proved by contradiction. If one side were longer, cutting it down to match the other [[prop-3|I.3]] would give a smaller triangle equal to the whole one by [[prop-4|I.4]], which is impossible [[cn-5|C.N. 5]]."},
+{t:"thm",s:"Given two straight lines constructed on a straight line (from its extremities) and meeting in a point, there cannot be constructed on the same straight line (from its extremities), and on the same side of it, two other straight lines meeting in another point and equal to the former two respectively, namely each to that which has the same extremity with it.",
+ note:"A lemma that prepares [[prop-8|I.8]]. Suppose two different apexes existed. Joining them makes two isosceles triangles, and [[prop-5|I.5]] then forces one angle to be both larger and smaller than another."},
+{t:"thm",s:"If two triangles have the two sides equal to two sides respectively, and have also the base equal to the base, they will also have the angles equal which are contained by the equal straight lines.",
+ note:"Side-side-side. Lay one triangle on the other with the bases together. By [[prop-7|I.7]] the apexes cannot land in different places, so they coincide and the angles are equal."},
+{t:"prob",s:"To bisect a given rectilineal angle.",fig:9,
+ cap:"Drag A, B or C to change the angle. AF splits it into two equal halves.",
+ proof:`<p>Let the angle BAC be the given rectilineal angle. Thus it is required to bisect it.</p>
+<p>Let a point D be taken at random on AB; let AE be cut off from AC equal to AD [[prop-3|I.3]]; let DE be joined, and on DE let the equilateral triangle DEF be constructed [[prop-1|I.1]]; let AF be joined. I say that the angle BAC has been bisected by the straight line AF.</p>
+<p>For, since AD is equal to AE, and AF is common, the two sides DA, AF are equal to the two sides EA, AF respectively. And the base DF is equal to the base EF; therefore the angle DAF is equal to the angle EAF [[prop-8|I.8]].</p>
+<p>Therefore the given rectilineal angle BAC has been bisected by the straight line AF. <span class="qed">Being what it was required to do.</span></p>`},
+{t:"prob",s:"To bisect a given finite straight line.",fig:10,
+ cap:"Drag A or B. CD bisects the angle at C, and D lands at the middle of AB.",
+ proof:`<p>Let AB be the given finite straight line. Thus it is required to bisect the finite straight line AB.</p>
+<p>Let the equilateral triangle ABC be constructed on it [[prop-1|I.1]], and let the angle ACB be bisected by the straight line CD [[prop-9|I.9]]. I say that the straight line AB has been bisected at the point D.</p>
+<p>For, since AC is equal to CB, and CD is common, the two sides AC, CD are equal to the two sides BC, CD respectively; and the angle ACD is equal to the angle BCD; therefore the base AD is equal to the base BD [[prop-4|I.4]].</p>
+<p>Therefore the given finite straight line AB has been bisected at D. <span class="qed">Being what it was required to do.</span></p>`},
+{t:"prob",s:"To draw a straight line at right angles to a given straight line from a given point on it.",fig:11,
+ cap:"Drag A or B to move the line, and C to slide the point along it. CF always stands at right angles.",
+ proof:`<p>Let AB be the given straight line, and C the given point on it. Thus it is required to draw from the point C a straight line at right angles to the straight line AB.</p>
+<p>Let a point D be taken at random on AC; let CE be made equal to CD [[prop-3|I.3]]; on DE let the equilateral triangle FDE be constructed [[prop-1|I.1]], and let FC be joined. I say that the straight line FC has been drawn at right angles to the given straight line AB from C the given point on it.</p>
+<p>For, since DC is equal to CE, and CF is common, the two sides DC, CF are equal to the two sides EC, CF respectively; and the base DF is equal to the base FE; therefore the angle DCF is equal to the angle ECF [[prop-8|I.8]]; and they are adjacent angles.</p>
+<p>But, when a straight line set up on a straight line makes the adjacent angles equal to one another, each of the equal angles is right [[def-10|Def. 10]]; therefore each of the angles DCF, FCE is right.</p>
+<p>Therefore the straight line CF has been drawn at right angles to the given straight line AB from the given point C on it. <span class="qed">Being what it was required to do.</span></p>`},
+{t:"prob",s:"To a given infinite straight line, from a given point which is not on it, to draw a perpendicular straight line.",fig:12,
+ cap:"Drag C, or drag D across the line to change the circle. CH always meets AB at right angles.",
+ proof:`<p>Let AB be the given infinite straight line, and C the given point which is not on it. Thus it is required to draw to the given infinite straight line AB, from the given point C which is not on it, a perpendicular straight line.</p>
+<p>For let a point D be taken at random on the other side of the straight line AB, and with centre C and distance CD let the circle EFG be described [[post-3|Post. 3]]; let the straight line EG be bisected at H [[prop-10|I.10]], and let the straight lines CG, CH, CE be joined. I say that CH has been drawn perpendicular to the given infinite straight line AB from the given point C which is not on it.</p>
+<p>For, since GH is equal to HE, and HC is common, the two sides GH, HC are equal to the two sides EH, HC respectively; and the base CG is equal to the base CE; therefore the angle CHG is equal to the angle EHC [[prop-8|I.8]]. And they are adjacent angles.</p>
+<p>But, when a straight line set up on a straight line makes the adjacent angles equal to one another, each of the equal angles is right, and the straight line standing on the other is called a perpendicular to that on which it stands [[def-10|Def. 10]].</p>
+<p>Therefore CH has been drawn perpendicular to the given infinite straight line AB from the given point C which is not on it. <span class="qed">Being what it was required to do.</span></p>`},
+{t:"thm",s:"If a straight line set up on a straight line make angles, it will make either two right angles or angles equal to two right angles.",
+ note:"Euclid raises a perpendicular [[prop-11|I.11]] and adds and subtracts angles using the common notions, so the two angles together always come to two right angles."},
+{t:"thm",s:"If with any straight line, and at a point on it, two straight lines not lying on the same side make the adjacent angles equal to two right angles, the two straight lines will be in a straight line with one another.",
+ note:"The converse of [[prop-13|I.13]]. If the second line did not continue the first, [[prop-13|I.13]] would make a part equal to the whole [[cn-5|C.N. 5]]."},
+{t:"thm",s:"If two straight lines cut one another, they make the vertical angles equal to one another.",
+ note:"Each of the two vertical angles, added to the same neighbouring angle, makes two right angles [[prop-13|I.13]]. Take that shared angle away and the two that remain are equal [[cn-3|C.N. 3]]."},
+{t:"thm",s:"In any triangle, if one of the sides be produced, the exterior angle is greater than either of the interior and opposite angles.",
+ note:"Bisect the side opposite the angle [[prop-10|I.10]] and extend the line from the vertex through that midpoint to twice its length. Then [[prop-15|I.15]] and [[prop-4|I.4]] place a copy of the interior angle strictly inside the exterior one."},
+{t:"thm",s:"In any triangle two angles taken together in any manner are less than two right angles.",
+ note:"Extend a side. The exterior angle is greater than the interior opposite angle [[prop-16|I.16]], and the exterior angle together with its neighbour makes two right angles [[prop-13|I.13]]."},
+{t:"thm",s:"In any triangle the greater side subtends the greater angle.",
+ note:"Cut the longer side down to the length of the shorter [[prop-3|I.3]]. The isosceles triangle this forms [[prop-5|I.5]], together with [[prop-16|I.16]], shows the angle opposite the longer side is the larger."},
+{t:"thm",s:"In any triangle the greater angle is subtended by the greater side.",
+ note:"The converse of [[prop-18|I.18]]. The side opposite the larger angle cannot be equal to the other [[prop-5|I.5]] or shorter than it [[prop-18|I.18]], so it is longer."},
+{t:"thm",s:"In any triangle two sides taken together in any manner are greater than the remaining one.",
+ note:"The triangle inequality. Extend one side by the length of a second, forming an isosceles triangle [[prop-5|I.5]], then compare angles and sides with [[prop-19|I.19]]."},
+{t:"thm",s:"If on one of the sides of a triangle, from its extremities, there be constructed two straight lines meeting within the triangle, the straight lines so constructed will be less than the remaining two sides of the triangle, but will contain a greater angle.",
+ note:"Extend one inner line to meet a side. Using [[prop-20|I.20]] twice gives the statement about lengths, and [[prop-16|I.16]] twice gives the one about the angle."},
+{t:"prob",s:"Out of three straight lines, which are equal to three given straight lines, to construct a triangle: thus it is necessary that two of the straight lines taken together in any manner should be greater than the remaining one.",
+ note:"Lay the three lengths end to end on a line [[prop-3|I.3]] and draw two circles [[post-3|Post. 3]]. Where they cross is the apex. The condition from [[prop-20|I.20]] guarantees that the circles meet."},
+{t:"prob",s:"On a given straight line and at a point on it to construct a rectilineal angle equal to a given rectilineal angle.",
+ note:"Copying an angle. Mark a triangle on the given angle, rebuild a triangle with the same three sides at the new point [[prop-22|I.22]], and the angles match by [[prop-8|I.8]]."},
+{t:"thm",s:"If two triangles have the two sides equal to two sides respectively, but have the one of the angles contained by the equal straight lines greater than the other, they will also have the base greater than the base.",
+ note:"Often called the hinge theorem. Copy the larger angle onto the second triangle [[prop-23|I.23]], then compare the bases with [[prop-5|I.5]] and [[prop-19|I.19]]."},
+{t:"thm",s:"If two triangles have the two sides equal to two sides respectively, but have the base greater than the base, they will also have the one of the angles contained by the equal straight lines greater than the other.",
+ note:"The converse of [[prop-24|I.24]]. Equal angles would give equal bases [[prop-4|I.4]], and a smaller angle would give a smaller base [[prop-24|I.24]]."},
+{t:"thm",s:"If two triangles have the two angles equal to two angles respectively, and one side equal to one side, namely, either the side adjoining the equal angles, or that subtending one of the equal angles, they will also have the remaining sides equal to the remaining sides and the remaining angle to the remaining angle.",
+ note:"Angle-side-angle and angle-angle-side. Suppose a side were longer, cut it down [[prop-3|I.3]], and reach a contradiction through [[prop-4|I.4]] (and [[prop-16|I.16]] in the second case)."},
+{t:"thm",s:"If a straight line falling on two straight lines make the alternate angles equal to one another, the straight lines will be parallel to one another.",
+ note:"If the lines met, they would form a triangle whose exterior angle equals an interior opposite angle, contradicting [[prop-16|I.16]]."},
+{t:"thm",s:"If a straight line falling on two straight lines make the exterior angle equal to the interior and opposite angle on the same side, or the interior angles on the same side equal to two right angles, the straight lines will be parallel to one another.",
+ note:"Both cases reduce to equal alternate angles through [[prop-15|I.15]] and [[prop-13|I.13]], and then [[prop-27|I.27]] applies."},
+{t:"thm",s:"A straight line falling on parallel straight lines makes the alternate angles equal to one another, the exterior angle equal to the interior and opposite angle, and the interior angles on the same side equal to two right angles.",
+ note:"The first proposition to use the parallel postulate. If the alternate angles were unequal, the interior angles on one side would add to less than two right angles, and the lines would meet [[post-5|Post. 5]]."},
+{t:"thm",s:"Straight lines parallel to the same straight line are also parallel to one another.",
+ note:"Draw a line across all three. [[prop-29|I.29]] makes the angles equal, and [[prop-27|I.27]] then makes the outer two parallel."},
+{t:"prob",s:"Through a given point to draw a straight line parallel to a given straight line.",
+ note:"Join the point to the line, copy the angle at the point on the other side [[prop-23|I.23]], and [[prop-27|I.27]] makes the new line parallel."},
+{t:"thm",s:"In any triangle, if one of the sides be produced, the exterior angle is equal to the two interior and opposite angles, and the three interior angles of the triangle are equal to two right angles.",fig:32,ro:true,
+ cap:"Drag A, B or C. The red angles match, the blue angles match, and the three angles of the triangle always add to 180°.",
+ proof:`<p>Let ABC be a triangle, and let one side of it BC be produced to D; I say that the exterior angle ACD is equal to the two interior and opposite angles CAB, ABC, and the three interior angles of the triangle ABC, BCA, CAB are equal to two right angles.</p>
+<p>For let CE be drawn through the point C parallel to the straight line AB [[prop-31|I.31]].</p>
+<p>Then, since AB is parallel to CE, and AC has fallen upon them, the alternate angles BAC, ACE are equal to one another [[prop-29|I.29]]. Again, since AB is parallel to CE, and the straight line BD has fallen upon them, the exterior angle ECD is equal to the interior and opposite angle ABC [[prop-29|I.29]].</p>
+<p>But the angle ACE was also proved equal to the angle BAC; therefore the whole angle ACD is equal to the two interior and opposite angles BAC, ABC.</p>
+<p>Let the angle ACB be added to each; therefore the angles ACD, ACB are equal to the three angles ABC, BCA, CAB. But the angles ACD, ACB are equal to two right angles [[prop-13|I.13]]; therefore the angles ABC, BCA, CAB are also equal to two right angles. <span class="qed">Being what it was required to prove.</span></p>`},
+{t:"thm",s:"The straight lines joining equal and parallel straight lines (at the extremities which are) in the same directions (respectively) are themselves also equal and parallel.",
+ note:"Draw a diagonal. [[prop-29|I.29]] and [[prop-4|I.4]] make the two triangles equal, so the joining lines are equal, and [[prop-27|I.27]] makes them parallel."},
+{t:"thm",s:"In parallelogrammic areas the opposite sides and angles are equal to one another, and the diameter bisects the areas.",
+ note:"The diagonal (Euclid's “diameter”) splits the parallelogram into two triangles that are equal by [[prop-29|I.29]] and [[prop-26|I.26]]."},
+{t:"thm",s:"Parallelograms which are on the same base and in the same parallels are equal to one another.",
+ note:"From here on “equal” means equal in area. Euclid adds and takes away a shared triangle and trapezium, using [[prop-34|I.34]], [[prop-4|I.4]] and [[cn-2|C.N. 2]]–[[cn-3|3]]."},
+{t:"thm",s:"Parallelograms which are on equal bases and in the same parallels are equal to one another.",
+ note:"Join the ends of the two bases to form a middle parallelogram, then use [[prop-35|I.35]] twice."},
+{t:"thm",s:"Triangles which are on the same base and in the same parallels are equal to one another.",
+ note:"Complete each triangle to a parallelogram [[prop-31|I.31]]. The parallelograms are equal [[prop-35|I.35]], and each triangle is half of its parallelogram [[prop-34|I.34]]."},
+{t:"thm",s:"Triangles which are on equal bases and in the same parallels are equal to one another.",
+ note:"The same argument as [[prop-37|I.37]], with [[prop-36|I.36]] in place of [[prop-35|I.35]]."},
+{t:"thm",s:"Equal triangles which are on the same base and on the same side are also in the same parallels.",
+ note:"The converse of [[prop-37|I.37]]. If the line joining the apexes were not parallel to the base, [[prop-31|I.31]] and [[prop-37|I.37]] would make a part equal to the whole."},
+{t:"thm",s:"Equal triangles which are on equal bases and on the same side are also in the same parallels.",
+ note:"The same argument as [[prop-39|I.39]], using [[prop-38|I.38]]."},
+{t:"thm",s:"If a parallelogram have the same base with a triangle and be in the same parallels, the parallelogram is double of the triangle.",
+ note:"A diagonal halves the parallelogram [[prop-34|I.34]], and that half equals the triangle [[prop-37|I.37]]."},
+{t:"prob",s:"To construct, in a given rectilineal angle, a parallelogram equal to a given triangle.",
+ note:"Bisect the triangle's base [[prop-10|I.10]] and build the parallelogram on half of it with the given angle [[prop-23|I.23]], [[prop-31|I.31]]. Then [[prop-38|I.38]] and [[prop-41|I.41]] make it equal to the triangle."},
+{t:"thm",s:"In any parallelogram the complements of the parallelograms about the diameter are equal to one another.",
+ note:"The diagonal halves the whole and each small parallelogram on it [[prop-34|I.34]]. Take the equal halves away and the two leftover pieces are equal [[cn-3|C.N. 3]]."},
+{t:"prob",s:"To a given straight line to apply, in a given rectilineal angle, a parallelogram equal to a given triangle.",
+ note:"Build the parallelogram anywhere with [[prop-42|I.42]], then use the equal complements of [[prop-43|I.43]] to move the same area onto the given line."},
+{t:"prob",s:"To construct, in a given rectilineal angle, a parallelogram equal to a given rectilineal figure.",
+ note:"Cut the figure into triangles, turn each into a parallelogram on a common line [[prop-44|I.44]], and stack them into one parallelogram."},
+{t:"prob",s:"On a given straight line to describe a square.",fig:46,
+ cap:"Drag A or B. The figure stays a square: four equal sides and four right angles.",
+ proof:`<p>Let AB be the given straight line; thus it is required to describe a square on the straight line AB.</p>
+<p>Let AC be drawn at right angles to the straight line AB from the point A on it [[prop-11|I.11]], and let AD be made equal to AB [[prop-3|I.3]]; through the point D let DE be drawn parallel to AB, and through the point B let BE be drawn parallel to AD [[prop-31|I.31]]. Therefore ADEB is a parallelogram; therefore AB is equal to DE, and AD to BE [[prop-34|I.34]].</p>
+<p>But AB is equal to AD; therefore the four straight lines BA, AD, DE, EB are equal to one another; therefore the parallelogram ADEB is equilateral.</p>
+<p>I say next that it is also right-angled. For, since the straight line AD has fallen upon the parallels AB, DE, the angles BAD, ADE are equal to two right angles [[prop-29|I.29]]. But the angle BAD is right; therefore the angle ADE is also right. And in parallelogrammic areas the opposite sides and angles are equal to one another [[prop-34|I.34]]; therefore each of the opposite angles ABE, BED is also right. Therefore ADEB is right-angled.</p>
+<p>And it was also proved equilateral. Therefore it is a square [[def-22|Def. 22]]; and it is described on the straight line AB. <span class="qed">Being what it was required to do.</span></p>`},
+{t:"thm",s:"In right-angled triangles the square on the side subtending the right angle is equal to the squares on the sides containing the right angle.",fig:47,ro:true,vb:"0 0 400 380",
+ cap:"The Pythagorean theorem. Drag A around the semicircle, or drag B or C. The red square always matches the red rectangle, and the blue square the blue one.",
+ proof:`<p>Let ABC be a right-angled triangle having the angle BAC right; I say that the square on BC is equal to the squares on BA, AC.</p>
+<p>For let there be described on BC the square BDEC, and on BA, AC the squares GB, HC [[prop-46|I.46]]; through A let AL be drawn parallel to either BD or CE, and let AD, FC be joined.</p>
+<p>Then, since each of the angles BAC, BAG is right, it follows that with a straight line BA, and at the point A on it, the two straight lines AC, AG not lying on the same side make the adjacent angles equal to two right angles; therefore CA is in a straight line with AG [[prop-14|I.14]]. For the same reason BA is also in a straight line with AH.</p>
+<p>And, since the angle DBC is equal to the angle FBA, for each is right, let the angle ABC be added to each; therefore the whole angle DBA is equal to the whole angle FBC [[cn-2|C.N. 2]].</p>
+<p>And, since DB is equal to BC, and FB to BA, the two sides AB, BD are equal to the two sides FB, BC respectively, and the angle ABD is equal to the angle FBC; therefore the base AD is equal to the base FC, and the triangle ABD is equal to the triangle FBC [[prop-4|I.4]].</p>
+<p>Now the parallelogram BL is double of the triangle ABD, for they have the same base BD and are in the same parallels BD, AL [[prop-41|I.41]]. And the square GB is double of the triangle FBC, for they again have the same base FB and are in the same parallels FB, GC [[prop-41|I.41]]. Therefore the parallelogram BL is also equal to the square GB.</p>
+<p>Similarly, if AE, BK be joined, the parallelogram CL can also be proved equal to the square HC; therefore the whole square BDEC is equal to the two squares GB, HC [[cn-2|C.N. 2]].</p>
+<p>And the square BDEC is described on BC, and the squares GB, HC on BA, AC. Therefore the square on the side BC is equal to the squares on the sides BA, AC. <span class="qed">Being what it was required to prove.</span></p>`},
+{t:"thm",s:"If in a triangle the square on one of the sides be equal to the squares on the remaining two sides of the triangle, the angle contained by the remaining two sides of the triangle is right.",
+ note:"The converse of [[prop-47|I.47]], and the last proposition of Book I. Build a right angle with the same two shorter sides [[prop-11|I.11]]. By [[prop-47|I.47]] its third side matches, so the triangles are equal by [[prop-8|I.8]] and the original angle is right."}
+];
+
+const cite=s=>s.replace(/\[\[([\w-]+)\|([^\]]+)\]\]/g,'<a class="cite" href="#$1">[$2]</a>');
+function list(el,arr,prefix){document.getElementById(el).innerHTML=arr.map((x,i)=>`<li id="${prefix}-${i+1}"><span class="n">${i+1}.</span><span>${x}</span></li>`).join('');}
+list('defs',DEFS,'def');list('posts',POSTS,'post');list('cns',CNS,'cn');
+document.getElementById('jump').innerHTML=PROPS.map((p,i)=>`<a href="#prop-${i+1}" class="${p.fig?'live':''}">I.${i+1}</a>`).join('');
+document.getElementById('props').innerHTML=PROPS.map((p,i)=>`
+<article class="prop" id="prop-${i+1}">
+ <div class="head"><span class="num">I.${i+1}</span><span class="tag ${p.t}">${p.t==='prob'?'Problem':'Theorem'}</span></div>
+ <p class="statement">${p.s}</p>
+ ${p.fig?`<figure><svg class="fig" id="fig${p.fig}" viewBox="${p.vb||'0 0 400 300'}" role="img" aria-label="Interactive figure for Proposition ${i+1}"></svg>
+ <figcaption>${p.cap}</figcaption>${p.fig===4?`<div class="slider"><label for="t4">Lay ABC on DEF</label><input type="range" id="t4" min="0" max="1" step="0.01" value="0"></div><div class="readout" id="ro4"></div>`:''}${p.ro?`<div class="readout" id="ro${p.fig}"></div>`:''}</figure>`:''}
+ ${p.proof?`<details${i===0?' open':''}><summary>Proof</summary><div class="proof">${cite(p.proof)}</div></details>`:''}
+ ${p.note?`<p class="note">${cite(p.note)}</p>`:''}
+</article>`).join('');
+
+/* geometry helpers */
+const W=400,H=300;
+const sub=(a,b)=>({x:a.x-b.x,y:a.y-b.y}), add=(a,b)=>({x:a.x+b.x,y:a.y+b.y}), mul=(a,k)=>({x:a.x*k,y:a.y*k});
+const len=a=>Math.hypot(a.x,a.y), dist=(a,b)=>len(sub(a,b)), unit=a=>{const l=len(a)||1;return mul(a,1/l)};
+const rot=(a,t)=>({x:a.x*Math.cos(t)-a.y*Math.sin(t),y:a.x*Math.sin(t)+a.y*Math.cos(t)});
+const apex=(a,b)=>{const m=mul(add(a,b),.5),d=sub(b,a);return add(m,mul({x:d.y,y:-d.x},Math.sqrt(3)/2));}; // equilateral apex, left side of a→b
+const L=(a,b,c='ln')=>`<line class="${c}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+const C=(o,r,c='c')=>`<circle class="${c}" cx="${o.x}" cy="${o.y}" r="${r}"/>`;
+const P=p=>`<circle class="pt" cx="${p.x}" cy="${p.y}" r="3"/>`;
+const T=(p,s,dx=8,dy=-8)=>`<text class="lab" x="${p.x+dx}" y="${p.y+dy}">${s}</text>`;
+const poly=(ps,c='tri')=>`<polygon class="${c}" points="${ps.map(p=>p.x+','+p.y).join(' ')}"/>`;
+const off=(p,from,k=16)=>{const u=unit(sub(p,from));return {x:p.x+u.x*k-5,y:p.y+u.y*k+5};}; // label placed away from a point
+const lab=(p,s,from)=>{const q=off(p,from);return `<text class="lab" x="${q.x}" y="${q.y}">${s}</text>`;};
+const f1=n=>n.toFixed(1);
+
+function fig(id,pts,draw){
+  const svg=document.getElementById(id); if(!svg) return;
+  let drag=null; const vb=svg.viewBox.baseVal, VW=vb.width||W, VH=vb.height||H;
+  const render=()=>{
+    let s=draw(pts);
+    for(const k in pts){const p=pts[k]; s+=`<circle class="ring" cx="${p.x}" cy="${p.y}" r="6"/><circle class="hit" data-k="${k}" cx="${p.x}" cy="${p.y}" r="18"/>`;}
+    svg.innerHTML=s;
+  };
+  svg.addEventListener('pointerdown',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;drag=k;try{svg.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault();});
+  svg.addEventListener('pointermove',e=>{if(!drag)return;const m=svg.getScreenCTM();if(!m)return;const q=new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse());
+    pts[drag].x=Math.max(8,Math.min(VW-8,q.x));pts[drag].y=Math.max(8,Math.min(VH-8,q.y));render();});
+  const end=()=>{drag=null};svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',end);
+  render();return render;
+}
+
+/* I.1 */
+fig('fig1',{A:{x:160,y:190},B:{x:240,y:190}},({A,B})=>{
+  const r=dist(A,B),Cp=apex(A,B),D=sub(A,sub(B,A)),E=add(B,sub(B,A));
+  return C(A,r)+C(B,r)+poly([A,B,Cp])+L(A,B,'b')+L(A,Cp,'r')+L(B,Cp,'y')+P(Cp)+P(D)+P(E)
+   +lab(A,'A',Cp)+lab(B,'B',Cp)+T(Cp,'C',-4,-10)+T(D,'D',-16,4)+T(E,'E',6,4);
+});
+/* I.2 */
+fig('fig2',{A:{x:175,y:200},B:{x:225,y:200},C:{x:300,y:250}},({A,B,C:Cc})=>{
+  const D=apex(A,B),bc=dist(B,Cc),G=add(B,mul(unit(sub(B,D)),bc)),Lp=add(D,mul(unit(sub(A,D)),dist(A,B)+bc));
+  return C(B,bc)+C(D,dist(D,G))+poly([D,A,B])+L(D,Lp,'aux')+L(D,G,'aux')+L(D,A)+L(D,B)+L(A,B)
+   +L(B,Cc,'r')+L(A,Lp,'r')+P(D)+P(G)+P(Lp)
+   +T(D,'D',-4,-10)+lab(A,'A',B)+lab(B,'B',A)+lab(Cc,'C',B)+lab(G,'G',D)+lab(Lp,'L',D);
+});
+/* I.3 */
+fig('fig3',{A:{x:60,y:170},B:{x:350,y:170},C1:{x:120,y:265},C2:{x:220,y:265}},({A,B,C1,C2})=>{
+  const c=dist(C1,C2), D2=apex(A,C1),Gp=add(C1,mul(unit(sub(C1,D2)),c)),Dp=add(D2,mul(unit(sub(A,D2)),dist(A,C1)+c));
+  const E=add(A,mul(unit(sub(B,A)),c)), ok=c<dist(A,B);
+  return C(A,c)+L(A,B)+L(C1,C2,'r')+L(A,Dp,'r')+(ok?L(A,E,'b')+P(E)+lab(E,'E',A):'')+P(Dp)
+   +lab(A,'A',B)+lab(B,'B',A)+T(mul(add(C1,C2),.5),'C',-4,-10)+lab(Dp,'D',A)
+   +(ok?'':`<text class="warn" x="16" y="24">C is now longer than AB, so nothing can be cut off.</text>`);
+});
+/* I.4 */
+const r4=fig('fig4',{A:{x:50,y:220},B:{x:150,y:230},C:{x:85,y:130},D:{x:250,y:230},E:{x:345,y:200}},pts=>{
+  const {A,B,C:Cc,D}=pts;
+  pts.E=Object.assign(pts.E,add(D,mul(unit(sub(pts.E,D)),dist(A,B)))); const E=pts.E;
+  const th=Math.atan2(E.y-D.y,E.x-D.x)-Math.atan2(B.y-A.y,B.x-A.x);
+  const F=add(D,rot(sub(Cc,A),th));
+  const tEl=document.getElementById('t4'), t=tEl?+tEl.value:0;
+  const mv=p=>add(add(A,mul(sub(D,A),t)),rot(sub(p,A),th*t));
+  const ang=(o,p,q)=>{const a=Math.abs(Math.atan2(p.y-o.y,p.x-o.x)-Math.atan2(q.y-o.y,q.x-o.x))*180/Math.PI;return a>180?360-a:a;};
+  const ro=document.getElementById('ro4');
+  if(ro) ro.textContent=`AB = DE = ${f1(dist(A,B))}   AC = DF = ${f1(dist(A,Cc))}   ∠BAC = ∠EDF = ${f1(ang(A,B,Cc))}°   →   BC = ${f1(dist(B,Cc))}, EF = ${f1(dist(E,F))}`;
+  let s=poly([A,B,Cc])+poly([D,E,F])+L(A,B,'r')+L(A,Cc,'b')+L(B,Cc,'y')+L(D,E,'r')+L(D,F,'b')+L(E,F,'y')+P(F)
+   +lab(A,'A',Cc)+lab(B,'B',Cc)+lab(Cc,'C',A)+lab(D,'D',F)+lab(E,'E',F)+lab(F,'F',D);
+  if(t>0){const a=mv(A),b=mv(B),c=mv(Cc);s+=poly([a,b,c],'ghost');}
+  return s;
+});
+const t4=document.getElementById('t4'); if(t4&&r4) t4.addEventListener('input',r4);
+/* I.9 */
+fig('fig9',{A:{x:60,y:240},B:{x:350,y:250},C:{x:300,y:60}},({A,B,C:Cc})=>{
+  const d=0.55*Math.min(dist(A,B),dist(A,Cc)),D=add(A,mul(unit(sub(B,A)),d)),E=add(A,mul(unit(sub(Cc,A)),d));
+  let F=apex(D,E); if(dist(F,A)<dist(mul(add(D,E),.5),A)) F=apex(E,D);
+  const R=add(A,mul(unit(sub(F,A)),Math.max(dist(A,B),dist(A,Cc))));
+  return C(A,d)+poly([D,E,F])+L(A,B)+L(A,Cc)+L(A,D,'r')+L(A,E,'r')+L(D,E,'aux')+L(D,F,'y')+L(E,F,'y')+L(A,R,'b')+P(D)+P(E)+P(F)
+   +lab(A,'A',F)+lab(B,'B',A)+lab(Cc,'C',A)+lab(D,'D',Cc)+lab(E,'E',B)+lab(F,'F',A);
+});
+/* I.10 */
+fig('fig10',{A:{x:110,y:220},B:{x:290,y:220}},({A,B})=>{
+  const Cp=apex(A,B),D=mul(add(A,B),.5);
+  return poly([A,B,Cp])+L(A,Cp,'y')+L(B,Cp,'y')+L(A,D,'r')+L(D,B,'r')+L(Cp,D,'ln')+P(Cp)+P(D)
+   +lab(A,'A',Cp)+lab(B,'B',Cp)+T(Cp,'C',-4,-10)+lab(D,'D',Cp);
+});
+/* shared */
+const rmark=(o,u,v,k=10)=>{const a=add(o,mul(u,k)),b=add(a,mul(v,k)),c=add(o,mul(v,k));return `<path class="aux" d="M${a.x},${a.y} L${b.x},${b.y} L${c.x},${c.y}"/>`;};
+const wedge=(o,p,q,r,c)=>{const u1=unit(sub(p,o)),u2=unit(sub(q,o)),a=add(o,mul(u1,r)),b=add(o,mul(u2,r)),cr=u1.x*u2.y-u1.y*u2.x;return `<path class="${c}" d="M${o.x},${o.y} L${a.x},${a.y} A${r},${r} 0 0 ${cr>0?1:0} ${b.x},${b.y} Z"/>`;};
+const angD=(o,p,q)=>{const a=Math.abs(Math.atan2(p.y-o.y,p.x-o.x)-Math.atan2(q.y-o.y,q.x-o.x))*180/Math.PI;return a>180?360-a:a;};
+const dot=(a,b)=>a.x*b.x+a.y*b.y;
+/* I.11 */
+fig('fig11',{A:{x:40,y:230},B:{x:360,y:230},C:{x:200,y:230}},pts=>{
+  const {A,B}=pts,u=unit(sub(B,A)),ab=dist(A,B);
+  const t=Math.max(Math.min(30,ab/2),Math.min(ab-Math.min(30,ab/2),dot(sub(pts.C,A),u)));
+  Object.assign(pts.C,add(A,mul(u,t))); const Cc=pts.C;
+  const d=0.5*Math.min(dist(Cc,A),dist(Cc,B)),D=add(Cc,mul(u,-d)),E=add(Cc,mul(u,d)),F=apex(D,E);
+  return poly([D,E,F])+L(A,B)+L(D,Cc,'r')+L(Cc,E,'r')+L(D,F,'y')+L(E,F,'y')+L(Cc,F,'b')+rmark(Cc,u,unit(sub(F,Cc)))+P(D)+P(E)+P(F)
+   +lab(A,'A',B)+lab(B,'B',A)+T(Cc,'C',-4,20)+T(D,'D',-4,20)+T(E,'E',-4,20)+T(F,'F',-4,-10);
+});
+/* I.12 */
+fig('fig12',{A:{x:20,y:170},B:{x:380,y:170},C:{x:170,y:70},D:{x:250,y:260}},({A,B,C:Cc,D})=>{
+  const u=unit(sub(B,A)),Hh=add(A,mul(u,dot(sub(Cc,A),u))),h=dist(Cc,Hh),r=dist(Cc,D);
+  let s=C(Cc,r)+L(A,B)+P(D)+lab(A,'A',B)+lab(B,'B',A)+T(Cc,'C',-4,-10)+lab(D,'D',Cc);
+  if(r<=h+2) return s+`<text class="warn" x="16" y="24">Move D across the line so the circle cuts AB.</text>`;
+  const half=Math.sqrt(r*r-h*h),G=add(Hh,mul(u,-half)),E=add(Hh,mul(u,half));
+  return s+L(Cc,G,'y')+L(Cc,E,'y')+L(G,Hh,'r')+L(Hh,E,'r')+L(Cc,Hh,'b')+rmark(Hh,u,unit(sub(Cc,Hh)))+P(G)+P(E)+P(Hh)
+   +T(G,'G',-6,20)+T(E,'E',-4,20)+T(Hh,'H',4,20);
+});
+/* I.32 */
+fig('fig32',{A:{x:150,y:70},B:{x:50,y:240},C:{x:230,y:240}},({A,B,C:Cc})=>{
+  const D=add(Cc,mul(unit(sub(Cc,B)),120)),E=add(Cc,mul(unit(sub(A,B)),130));
+  const a=angD(A,B,Cc),b=angD(B,A,Cc),c=angD(Cc,A,B);
+  const ro=document.getElementById('ro32');
+  if(ro) ro.textContent=`∠A = ${f1(a)}°   ∠B = ${f1(b)}°   ∠C = ${f1(c)}°   sum = ${f1(a+b+c)}°`;
+  return wedge(A,B,Cc,26,'wr')+wedge(Cc,A,E,26,'wr')+wedge(B,A,Cc,26,'wb')+wedge(Cc,E,D,34,'wb')+wedge(Cc,A,B,20,'wy')
+   +L(A,B)+L(A,Cc)+L(B,Cc)+L(Cc,D,'aux')+L(Cc,E,'aux')+P(D)+P(E)
+   +lab(A,'A',Cc)+lab(B,'B',Cc)+T(Cc,'C',-4,22)+T(D,'D',-4,22)+lab(E,'E',Cc);
+});
+/* I.46 */
+fig('fig46',{A:{x:130,y:250},B:{x:260,y:250}},({A,B})=>{
+  const d=sub(B,A),n={x:d.y,y:-d.x},D=add(A,n),E=add(B,n),Cx=add(A,mul(n,1.2)),cen=mul(add(A,E),.5);
+  return poly([A,B,E,D])+L(A,Cx,'aux')+L(A,B,'r')+L(A,D,'r')+L(D,E,'r')+L(B,E,'r')+rmark(A,unit(d),unit(n),12)+P(D)+P(E)
+   +lab(A,'A',cen)+lab(B,'B',cen)+lab(D,'D',cen)+lab(E,'E',cen)+lab(Cx,'C',A);
+});
+/* I.47 */
+fig('fig47',{B:{x:130,y:200},C:{x:270,y:200},A:{x:180,y:132}},pts=>{
+  const {B,C:Cc}=pts,O=mul(add(B,Cc),.5),R=dist(B,Cc)/2;
+  Object.assign(pts.A,add(O,mul(unit(sub(pts.A,O)),R))); const A=pts.A;
+  const sq=(P1,P2,away)=>{const d=sub(P2,P1);let n={x:d.y,y:-d.x};if(dot(n,sub(away,P1))>0)n=mul(n,-1);return n;};
+  const n=sq(B,Cc,A),D=add(B,n),E=add(Cc,n);
+  const n1=sq(A,B,Cc),F=add(B,n1),G=add(A,n1);
+  const n2=sq(A,Cc,B),K=add(Cc,n2),Hh=add(A,n2);
+  const u=unit(sub(Cc,B)),M=add(B,mul(u,dot(sub(A,B),u))),Lp=add(M,n);
+  const ab=dist(A,B)**2,ac=dist(A,Cc)**2,bc=dist(B,Cc)**2,k=v=>Math.round(v/100);
+  const ro=document.getElementById('ro47');
+  if(ro) ro.textContent=`AB² = ${k(ab)}   AC² = ${k(ac)}   AB² + AC² = ${k(ab+ac)}   BC² = ${k(bc)}   (in units of 100)`;
+  const cen=mul(add(add(A,B),Cc),1/3);
+  return C(O,R)+poly([A,B,F,G],'sqr')+poly([B,M,Lp,D],'sqr')+poly([A,Cc,K,Hh],'sqb')+poly([M,Cc,E,Lp],'sqb')
+   +poly([B,Cc,E,D],'sqn')+L(A,B)+L(A,Cc)+L(A,Lp,'aux')+L(A,D,'aux')+L(F,Cc,'aux')
+   +lab(A,'A',cen)+lab(B,'B',A)+lab(Cc,'C',A)+lab(D,'D',O)+lab(E,'E',O)+lab(F,'F',A)+lab(G,'G',B)+lab(Hh,'H',Cc)+lab(K,'K',A)+lab(Lp,'L',A);
+});
+</script>
+</body>
+</html>
